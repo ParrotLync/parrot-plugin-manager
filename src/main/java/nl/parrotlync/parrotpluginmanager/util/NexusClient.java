@@ -66,8 +66,13 @@ public class NexusClient {
                 JSONParser parser = new JSONParser();
                 JSONObject json = (JSONObject) parser.parse(inline.toString());
                 JSONArray array = (JSONArray) json.get("items");
-                JSONObject result = (JSONObject) array.get(0);
-                return result.get("downloadUrl").toString();
+                if (array.size() > 0) {
+                    JSONObject result = (JSONObject) array.get(0);
+                    return result.get("downloadUrl").toString();
+                } else {
+                    ParrotPluginManager.getInstance().getLogger().warning("Artifact " + artifact + " is not available at nexus.");
+                    return null;
+                }
             } else {
                 ParrotPluginManager.getInstance().getLogger().warning("Received response code " + connection.getResponseCode() + " while fetching downloadUrl for artifact: " + artifact);
                 ParrotPluginManager.getInstance().getLogger().warning("Please check if you provided a valid nexus-auth-string in the config.");
