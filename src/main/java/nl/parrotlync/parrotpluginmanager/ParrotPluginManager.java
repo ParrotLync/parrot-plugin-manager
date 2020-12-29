@@ -1,5 +1,6 @@
 package nl.parrotlync.parrotpluginmanager;
 
+import nl.parrotlync.parrotpluginmanager.command.PPMCommandExecutor;
 import nl.parrotlync.parrotpluginmanager.task.UpdateCheck;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -33,6 +34,7 @@ public class ParrotPluginManager extends JavaPlugin {
             }
         }
         getServer().getScheduler().runTaskAsynchronously(this, new UpdateCheck(plugins));
+        getCommand("ppm").setExecutor(new PPMCommandExecutor());
         getLogger().info("ParrotPluginManager is now enabled!");
     }
 

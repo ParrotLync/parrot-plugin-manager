@@ -3,3 +3,11 @@ name: ParrotPluginManager
 version: 1.0
 description: Plugin manager for plugins made by ParrotLync
 author: ParrotLync
+commands:
+  ppm:
+    usage: /ppm help
+    description: Basic ParrotPluginManager command
+permissions:
+  ppm.check:
+    default: op
+    description: Permission to use PPM commands
