@@ -18,6 +18,7 @@ public class UpdateCheck implements Runnable {
 
     @Override
     public void run() {
+        boolean hasUpdated = false;
         for (Plugin plugin : plugins) {
             String[] fragments = plugin.getClass().getProtectionDomain().getCodeSource().getLocation().getFile().split("/");
             String file = fragments[fragments.length - 1];
@@ -29,11 +30,10 @@ public class UpdateCheck implements Runnable {
                     if (!file.equals(latest)) {
                         info(plugin.getName() + " is not running the latest release. Starting update...");
                         if (NexusClient.downloadFile(name)) {
+                            hasUpdated = true;
                             PluginUtil.unload(plugin);
                             deletePlugin(plugin);
-                            if (PluginUtil.load(latest)) {
-                                info(latest + " has been installed and loaded.");
-                            }
+                            info(latest + " has been installed.");
                         }
                     } else {
                         info(plugin.getName() + " is running the latest release.");
@@ -43,7 +43,19 @@ public class UpdateCheck implements Runnable {
                 info(plugin.getName() + " is running on a SNAPSHOT version. Snapshots are not updated automatically.");
             }
         }
-        info("Update check complete!");
+
+        if (hasUpdated) {
+            info("Update check complete! New files have been downloaded, scheduling server restart...");
+            Bukkit.broadcastMessage("§8(§4§lPPM§8) §7This server is §crestarting §7in 1 minute!");
+            Bukkit.getServer().getScheduler().runTaskLater(ParrotPluginManager.getInstance(), () -> {
+                Bukkit.broadcastMessage("§8(§4§lPPM§8) §7This server is §crestarting §7in 10 seconds!");
+            }, 1000);
+            Bukkit.getServer().getScheduler().runTaskLater(ParrotPluginManager.getInstance(), () -> {
+                Bukkit.getServer().shutdown();
+            }, 1200);
+        } else {
+            info("Update check complete! No new files downloaded.");
+        }
     }
 
     private void deletePlugin(Plugin plugin) {
