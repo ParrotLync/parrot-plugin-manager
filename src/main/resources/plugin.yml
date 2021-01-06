@@ -11,3 +11,6 @@ permissions:
   ppm.check:
     default: op
     description: Permission to use PPM commands
+  ppm.staff:
+    default: op
+    description: Permission to receive PPM messages

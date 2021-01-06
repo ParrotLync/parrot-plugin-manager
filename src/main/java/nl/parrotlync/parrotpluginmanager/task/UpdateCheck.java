@@ -46,9 +46,10 @@ public class UpdateCheck implements Runnable {
 
         if (hasUpdated) {
             info("Update check complete! New files have been downloaded, scheduling server restart...");
-            Bukkit.broadcastMessage("§8(§4§lPPM§8) §7This server is §crestarting §7in 1 minute!");
+            Bukkit.broadcastMessage("§f[§aInformation§f] §cThe server you are on will §lrestart §cin §e1 minute§c.");
+            Bukkit.broadcast("§f[§cServer§f] The server you are currently on will §crestart §fin §b1 minute§f.", "ppm.staff");
             Bukkit.getServer().getScheduler().runTaskLater(ParrotPluginManager.getInstance(), () -> {
-                Bukkit.broadcastMessage("§8(§4§lPPM§8) §7This server is §crestarting §7in 10 seconds!");
+                Bukkit.broadcastMessage("§f[§aInformation§f] §cThe server you are on will §lrestart §cin §e10 seconds§c.");
             }, 1000);
             Bukkit.getServer().getScheduler().runTaskLater(ParrotPluginManager.getInstance(), () -> {
                 Bukkit.getServer().shutdown();
