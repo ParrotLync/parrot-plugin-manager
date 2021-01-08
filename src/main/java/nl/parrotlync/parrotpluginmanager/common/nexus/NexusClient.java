@@ -1,6 +1,5 @@
-package nl.parrotlync.parrotpluginmanager.util;
+package nl.parrotlync.parrotpluginmanager.common.nexus;
 
-import nl.parrotlync.parrotpluginmanager.ParrotPluginManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -10,11 +9,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class NexusClient {
 
-    public static String getLatestVersion(String artifact) {
-        String downloadUrl = getDownloadUrl(artifact);
+    public static String getLatestVersion(String artifact, String auth, Logger logger) {
+        String downloadUrl = getDownloadUrl(artifact, auth, logger);
         if (downloadUrl != null) {
             String[] fragments = downloadUrl.split("/");
             return fragments[fragments.length - 1];
@@ -22,14 +22,14 @@ public class NexusClient {
         return null;
     }
 
-    public static boolean downloadFile(String artifact) {
-        String downloadUrl = getDownloadUrl(artifact);
-        String latestVersion = getLatestVersion(artifact);
+    public static boolean downloadFile(String artifact, String auth, Logger logger) {
+        String downloadUrl = getDownloadUrl(artifact, auth, logger);
+        String latestVersion = getLatestVersion(artifact, auth, logger);
         if (downloadUrl != null && latestVersion != null) {
             try {
                 URL url = new URL(downloadUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                byte[] encodedAuth = Base64.getEncoder().encode(getAuthString().getBytes());
+                byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
                 connection.setRequestProperty("Authorization", "Basic " + new String(encodedAuth));
                 BufferedInputStream inputStream = new BufferedInputStream(connection.getInputStream());
                 FileOutputStream fileOutput = new FileOutputStream("plugins/" + latestVersion);
@@ -38,20 +38,20 @@ public class NexusClient {
                 while ((byteContent = inputStream.read(data, 0, 1024)) != -1) {
                     fileOutput.write(data, 0, byteContent);
                 }
-                ParrotPluginManager.getInstance().getLogger().info("Successfully downloaded " + latestVersion);
+                logger.info("Successfully downloaded " + latestVersion);
                 return true;
             } catch (Exception e) {
-                ParrotPluginManager.getInstance().getLogger().warning("Couldn't download file: " + latestVersion);
+                logger.warning("Couldn't download file: " + latestVersion);
             }
         }
         return false;
     }
 
-    private static String getDownloadUrl(String artifact) {
+    private static String getDownloadUrl(String artifact, String auth, Logger logger) {
         try {
             URL url = new URL("https://nexus.ipictserver.nl/service/rest/v1/search/assets?sort=version&repository=maven-releases&group=nl.parrotlync&name=" + artifact);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            byte[] encodedAuth = Base64.getEncoder().encode(getAuthString().getBytes());
+            byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Authorization", "Basic " + new String(encodedAuth));
             connection.connect();
@@ -70,22 +70,18 @@ public class NexusClient {
                     JSONObject result = (JSONObject) array.get(0);
                     return result.get("downloadUrl").toString();
                 } else {
-                    ParrotPluginManager.getInstance().getLogger().warning("Artifact " + artifact + " is not available at nexus.");
+                    logger.warning("Artifact " + artifact + " is not available at nexus.");
                     return null;
                 }
             } else {
-                ParrotPluginManager.getInstance().getLogger().warning("Received response code " + connection.getResponseCode() + " while fetching downloadUrl for artifact: " + artifact);
-                ParrotPluginManager.getInstance().getLogger().warning("Please check if you provided a valid nexus-auth-string in the config.");
+                logger.warning("Received response code " + connection.getResponseCode() + " while fetching downloadUrl for artifact: " + artifact);
+                logger.warning("Please check if you provided a valid nexus-auth-string in the config.");
                 return null;
             }
         } catch (Exception e) {
-            ParrotPluginManager.getInstance().getLogger().warning("Couldn't fetch downloadUrl for artifact: " + artifact);
+            logger.warning("Couldn't fetch downloadUrl for artifact: " + artifact);
             e.printStackTrace();
             return null;
         }
-    }
-
-    private static String getAuthString() {
-        return ParrotPluginManager.getInstance().getConfig().getString("nexus-auth-string");
     }
 }

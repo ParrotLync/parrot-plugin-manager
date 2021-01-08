@@ -1,12 +1,12 @@
-package nl.parrotlync.parrotpluginmanager.command;
+package nl.parrotlync.parrotpluginmanager.spigot.command;
 
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import nl.parrotlync.parrotpluginmanager.ParrotPluginManager;
-import nl.parrotlync.parrotpluginmanager.task.UpdateCheck;
-import nl.parrotlync.parrotpluginmanager.util.NexusClient;
+import nl.parrotlync.parrotpluginmanager.spigot.ParrotPluginManager;
+import nl.parrotlync.parrotpluginmanager.common.nexus.NexusClient;
+import nl.parrotlync.parrotpluginmanager.spigot.task.UpdateTask;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -17,14 +17,14 @@ import org.bukkit.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PPMCommandExecutor implements TabExecutor {
+public class PPMCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender.hasPermission("ppm.check") && args.length > 0) {
             if (args[0].equalsIgnoreCase("check")) {
                 Bukkit.getScheduler().runTaskAsynchronously(ParrotPluginManager.getInstance(),
-                        new UpdateCheck(ParrotPluginManager.getInstance().getPlugins()));
+                        new UpdateTask(ParrotPluginManager.getInstance().getPlugins(), ParrotPluginManager.getInstance().getLogger()));
                 sender.sendMessage("§7Update check has started. Please refer to the logs to see the results.");
                 return true;
             }
@@ -42,7 +42,9 @@ public class PPMCommandExecutor implements TabExecutor {
                             } else {
                                 String name = file.split("-")[0];
                                 if (name.equalsIgnoreCase("DiscovChat")) { name = "DiscovChat-Spigot"; }
-                                String latest = NexusClient.getLatestVersion(name);
+                                String latest = NexusClient.getLatestVersion(name,
+                                        ParrotPluginManager.getInstance().getConfig().getString("nexus-auth-string"),
+                                        ParrotPluginManager.getInstance().getLogger());
                                 if (file.equalsIgnoreCase(latest)) {
                                     sender.sendMessage("§3" + plugin.getName() + " §7is running the §alatest §7version. (" + currentVersion + ")");
                                 } else if (latest == null) {

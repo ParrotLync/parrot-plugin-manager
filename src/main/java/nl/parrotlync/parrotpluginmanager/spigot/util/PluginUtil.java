@@ -1,6 +1,6 @@
-package nl.parrotlync.parrotpluginmanager.util;
+package nl.parrotlync.parrotpluginmanager.spigot.util;
 
-import nl.parrotlync.parrotpluginmanager.ParrotPluginManager;
+import nl.parrotlync.parrotpluginmanager.spigot.ParrotPluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
@@ -39,9 +39,9 @@ public class PluginUtil {
         return false;
     }
 
-    public static void unload(Plugin plugin) {
-        String name = plugin.getName();
+    public static void unload(String name) {
         PluginManager pluginManager = Bukkit.getPluginManager();
+        Plugin plugin = pluginManager.getPlugin(name);
         SimpleCommandMap commandMap = null;
         List<Plugin> plugins = null;
         Map<String, Plugin> names = null;

@@ -1,6 +1,6 @@
-main: nl.parrotlync.parrotpluginmanager.ParrotPluginManager
+main: nl.parrotlync.parrotpluginmanager.spigot.ParrotPluginManager
 name: ParrotPluginManager
-version: 1.0
+version: 1.1
 description: Plugin manager for plugins made by ParrotLync
 author: ParrotLync
 commands:

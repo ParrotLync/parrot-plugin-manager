@@ -1,19 +1,16 @@
-package nl.parrotlync.parrotpluginmanager;
+package nl.parrotlync.parrotpluginmanager.spigot;
 
-import nl.parrotlync.parrotpluginmanager.command.PPMCommandExecutor;
-import nl.parrotlync.parrotpluginmanager.task.UpdateCheck;
-import org.bukkit.Bukkit;
+import nl.parrotlync.parrotpluginmanager.spigot.command.PPMCommand;
+import nl.parrotlync.parrotpluginmanager.spigot.task.UpdateTask;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ParrotPluginManager extends JavaPlugin {
     private static ParrotPluginManager instance;
-    private final List<Plugin> plugins = new ArrayList<>();
 
     public ParrotPluginManager() {
         instance = this;
@@ -22,19 +19,15 @@ public class ParrotPluginManager extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        PluginManager pluginManager = getServer().getPluginManager();
         if (getConfig().getString("nexus-auth-string").isEmpty()) {
             getLogger().warning("Please enter the nexus-auth-string in the config to use ParrotPluginManager!");
-            pluginManager.disablePlugin(this);
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        for (Plugin plugin : pluginManager.getPlugins()) {
-            if (plugin.getDescription().getAuthors().contains("ParrotLync") && !plugin.getName().equals("ParrotPluginManager")) {
-                plugins.add(plugin);
-            }
-        }
-        getServer().getScheduler().runTaskAsynchronously(this, new UpdateCheck(plugins));
-        getCommand("ppm").setExecutor(new PPMCommandExecutor());
+
+        List<Plugin> plugins = getPlugins();
+        getServer().getScheduler().runTaskAsynchronously(this, new UpdateTask(plugins, getLogger()));
+        getCommand("ppm").setExecutor(new PPMCommand());
         getLogger().info("ParrotPluginManager is now enabled!");
     }
 
@@ -44,6 +37,13 @@ public class ParrotPluginManager extends JavaPlugin {
     }
 
     public List<Plugin> getPlugins() {
+        PluginManager pluginManager = getServer().getPluginManager();
+        List<Plugin> plugins = new ArrayList<>();
+        for (Plugin plugin : pluginManager.getPlugins()) {
+            if (plugin.getDescription().getAuthors().contains("ParrotLync") && !plugin.getName().equals("ParrotPluginManager")) {
+                plugins.add(plugin);
+            }
+        }
         return plugins;
     }
 
