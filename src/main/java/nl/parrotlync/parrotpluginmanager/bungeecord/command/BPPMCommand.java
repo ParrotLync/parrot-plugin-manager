@@ -53,9 +53,11 @@ public class BPPMCommand extends Command {
                         });
                     } else {
                         sender.sendMessage(TextComponent.fromLegacyText("§cThat is not a valid plugin!"));
+                        return;
                     }
                 } else {
                     sender.sendMessage(TextComponent.fromLegacyText("§cYou need to specify a plugin!"));
+                    return;
                 }
             }
         }
