@@ -38,4 +38,4 @@ jobs:
       with:
         servers: '[{"id": "nexus-releases", "username": "${{ secrets.MAVEN_REPO_USER }}", "password": "${{ secrets.MAVEN_REPO_PASS }}"}]'
     - name: Maven deploy
-      run: mvn -s --batch-mode -Drevision=.$GITHUB_RUN_NUMBER deploy
+      run: mvn --batch-mode -Drevision=.$GITHUB_RUN_NUMBER deploy
