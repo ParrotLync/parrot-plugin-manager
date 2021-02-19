@@ -19,11 +19,18 @@ jobs:
       uses: s4u/maven-settings-action@v2.3.0
       with:
         servers: '[{"id": "nexus-releases", "username": "${{ secrets.MAVEN_REPO_USER }}", "password": "${{ secrets.MAVEN_REPO_PASS }}"}]'
+    - name: Cache local Maven repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
     - name: Maven build
       run: mvn -B --batch-mode -Drevision=.$GITHUB_RUN_NUMBER clean package
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.2
       with:
-        path: '*.jar'
+        path: target/*.jar
     - name: Maven deploy
       run: mvn --batch-mode -Drevision=.$GITHUB_RUN_NUMBER deploy
