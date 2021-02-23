@@ -25,14 +25,14 @@ public class ParrotPluginManager extends JavaPlugin {
             return;
         }
 
-        List<Plugin> plugins = getPlugins();
-        getServer().getScheduler().runTaskAsynchronously(this, new UpdateTask(plugins, getLogger()));
         getCommand("ppm").setExecutor(new PPMCommand());
         getLogger().info("ParrotPluginManager is now enabled!");
     }
 
     @Override
     public void onDisable() {
+        List<Plugin> plugins = getPlugins();
+        new UpdateTask(plugins, getLogger()).run();
         getLogger().info("ParrotPluginManager is now disabled!");
     }
 

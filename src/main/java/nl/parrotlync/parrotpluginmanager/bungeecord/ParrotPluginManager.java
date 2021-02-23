@@ -30,9 +30,13 @@ public class ParrotPluginManager extends Plugin {
             return;
         }
 
-        List<Plugin> plugins = getPlugins();
-        getProxy().getScheduler().runAsync(this, new UpdateTask(plugins, getLogger()));
         getProxy().getPluginManager().registerCommand(this, new BPPMCommand());
+    }
+
+    @Override
+    public void onDisable() {
+        List<Plugin> plugins = getPlugins();
+        new UpdateTask(plugins, getLogger()).run();
     }
 
     public List<Plugin> getPlugins() {
