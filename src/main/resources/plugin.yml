@@ -2,6 +2,7 @@ main: nl.parrotlync.parrotpluginmanager.spigot.ParrotPluginManager
 name: ${artifactId}
 version: ${version}
 description: ${description}
+api-version: 1.15
 author: ParrotLync
 commands:
   ppm:

@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ParrotPluginManager extends JavaPlugin {
     private static ParrotPluginManager instance;
@@ -19,13 +20,13 @@ public class ParrotPluginManager extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        if (getConfig().getString("nexus-auth-string").isEmpty()) {
+        if (Objects.requireNonNull(getConfig().getString("nexus-auth-string")).isEmpty()) {
             getLogger().warning("Please enter the nexus-auth-string in the config to use ParrotPluginManager!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        getCommand("ppm").setExecutor(new PPMCommand());
+        Objects.requireNonNull(getCommand("ppm")).setExecutor(new PPMCommand());
         getLogger().info("ParrotPluginManager is now enabled!");
     }
 

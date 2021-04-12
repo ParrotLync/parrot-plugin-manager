@@ -1,6 +1,5 @@
 package nl.parrotlync.parrotpluginmanager.spigot.util;
 
-import nl.parrotlync.parrotpluginmanager.spigot.ParrotPluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
@@ -10,7 +9,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URLClassLoader;
 import java.util.Iterator;
@@ -19,26 +17,6 @@ import java.util.Map;
 import java.util.SortedSet;
 
 public class PluginUtil {
-    public static boolean load(String fileName) {
-        Plugin target = null;
-        File pluginDir = new File("plugins");
-        File pluginFile = new File(pluginDir, fileName);
-
-        try {
-            target = Bukkit.getPluginManager().loadPlugin(pluginFile);
-        } catch (Exception e) {
-            ParrotPluginManager.getInstance().getLogger().warning("Something went wrong while trying to load plugin " + fileName);
-            e.printStackTrace();
-        }
-
-        if (target != null) {
-            target.onLoad();
-            Bukkit.getPluginManager().enablePlugin(target);
-            return true;
-        }
-        return false;
-    }
-
     public static void unload(String name) {
         PluginManager pluginManager = Bukkit.getPluginManager();
         Plugin plugin = pluginManager.getPlugin(name);
@@ -48,6 +26,7 @@ public class PluginUtil {
         Map<String, Command> commands = null;
         Map<Event, SortedSet<RegisteredListener>> listeners = null;
 
+        assert plugin != null;
         pluginManager.disablePlugin(plugin);
         try {
             Field pluginsField = Bukkit.getPluginManager().getClass().getDeclaredField("plugins");
