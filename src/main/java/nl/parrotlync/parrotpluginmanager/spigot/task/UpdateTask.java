@@ -13,10 +13,12 @@ import java.util.logging.Logger;
 public class UpdateTask implements Runnable {
     private final List<Plugin> plugins;
     private final Logger logger;
+    private final boolean updateSnapshots;
 
-    public UpdateTask(List<Plugin> plugins, Logger logger) {
+    public UpdateTask(List<Plugin> plugins, Logger logger, boolean updateSnapshots) {
         this.plugins = plugins;
         this.logger = logger;
+        this.updateSnapshots = updateSnapshots;
     }
 
     @Override
@@ -27,12 +29,11 @@ public class UpdateTask implements Runnable {
             String file = fragments[fragments.length - 1];
             String name = file.split("-")[0];
 
-            if (file.contains("SNAPSHOT")) {
-                logger.info(name + " is running on a SNAPSHOT version. These are not updated automatically.");
+            if (file.contains("SNAPSHOT") &&!updateSnapshots) {
+                logger.info(name + " is running on a SNAPSHOT version. Run /ppm forceSnapshots to update SNAPSHOT versions.");
                 continue;
             }
 
-            if (name.equalsIgnoreCase("DiscovChat")) { name = "DiscovChat-Spigot"; }
             String latestVersion = NexusClient.getLatestVersion(name, getAuth(), logger);
             if (latestVersion == null) { continue; }
 

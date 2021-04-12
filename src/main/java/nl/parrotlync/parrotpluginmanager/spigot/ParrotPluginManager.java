@@ -32,7 +32,7 @@ public class ParrotPluginManager extends JavaPlugin {
     @Override
     public void onDisable() {
         List<Plugin> plugins = getPlugins();
-        new UpdateTask(plugins, getLogger()).run();
+        new UpdateTask(plugins, getLogger(), false).run();
         getLogger().info("ParrotPluginManager is now disabled!");
     }
 

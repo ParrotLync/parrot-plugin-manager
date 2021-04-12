@@ -24,8 +24,15 @@ public class PPMCommand implements TabExecutor {
         if (sender.hasPermission("ppm.check") && args.length > 0) {
             if (args[0].equalsIgnoreCase("check")) {
                 Bukkit.getScheduler().runTaskAsynchronously(ParrotPluginManager.getInstance(),
-                        new UpdateTask(ParrotPluginManager.getInstance().getPlugins(), ParrotPluginManager.getInstance().getLogger()));
-                sender.sendMessage("§7Update check has started. Please refer to the logs to see the results.");
+                        new UpdateTask(ParrotPluginManager.getInstance().getPlugins(), ParrotPluginManager.getInstance().getLogger(), false));
+                sender.sendMessage("§7Update check has started [SNAPSHOTS = false]. Please refer to the logs to see the results.");
+                return true;
+            }
+
+            if (args[0].equalsIgnoreCase("forceSnapshots")) {
+                Bukkit.getScheduler().runTaskAsynchronously(ParrotPluginManager.getInstance(),
+                        new UpdateTask(ParrotPluginManager.getInstance().getPlugins(), ParrotPluginManager.getInstance().getLogger(), true));
+                sender.sendMessage("§7Update check has started [SNAPSHOTS = true]. Please refer to the logs to see the results.");
                 return true;
             }
 
@@ -76,6 +83,7 @@ public class PPMCommand implements TabExecutor {
             if (args.length == 1) {
                 suggestions.add("check");
                 suggestions.add("version");
+                suggestions.add("forceSnapshots");
                 return StringUtil.copyPartialMatches(args[0], suggestions, new ArrayList<>());
             }
 
@@ -99,6 +107,9 @@ public class PPMCommand implements TabExecutor {
             sender.spigot().sendMessage(getTextComponent("§3/ppm version <plugin>",
                     "§7Checks which version a plugin is currently running.",
                     "/ppm version "));
+            sender.spigot().sendMessage(getTextComponent("§3/ppm forceSnapshots",
+                    "§7Force update all snapshot plugins.",
+                    "/ppm forceSnapshots "));
         } else {
             sender.sendMessage("§cYou don't have permission to do that!");
         }
@@ -111,6 +122,4 @@ public class PPMCommand implements TabExecutor {
         main.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));
         return main;
     }
-
-
 }

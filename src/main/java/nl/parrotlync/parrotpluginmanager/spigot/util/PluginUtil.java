@@ -48,40 +48,36 @@ public class PluginUtil {
         Map<String, Command> commands = null;
         Map<Event, SortedSet<RegisteredListener>> listeners = null;
 
-        if (pluginManager != null) {
-            pluginManager.disablePlugin(plugin);
+        pluginManager.disablePlugin(plugin);
+        try {
+            Field pluginsField = Bukkit.getPluginManager().getClass().getDeclaredField("plugins");
+            pluginsField.setAccessible(true);
+            plugins = (List<Plugin>) pluginsField.get(pluginManager);
+
+            Field lookupNamesField = Bukkit.getPluginManager().getClass().getDeclaredField("lookupNames");
+            lookupNamesField.setAccessible(true);
+            names = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
+
             try {
-                Field pluginsField = Bukkit.getPluginManager().getClass().getDeclaredField("plugins");
-                pluginsField.setAccessible(true);
-                plugins = (List<Plugin>) pluginsField.get(pluginManager);
+                Field listenersField = Bukkit.getPluginManager().getClass().getDeclaredField("listeners");
+                listenersField.setAccessible(true);
+                listeners = (Map<Event, SortedSet<RegisteredListener>>) listenersField.get(pluginManager);
+            } catch (Exception ignored) {
 
-                Field lookupNamesField = Bukkit.getPluginManager().getClass().getDeclaredField("lookupNames");
-                lookupNamesField.setAccessible(true);
-                names = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
-
-                try {
-                    Field listenersField = Bukkit.getPluginManager().getClass().getDeclaredField("listeners");
-                    listenersField.setAccessible(true);
-                    listeners = (Map<Event, SortedSet<RegisteredListener>>) listenersField.get(pluginManager);
-                } catch (Exception ignored) {
-
-                }
-
-                Field commandMapField = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
-                commandMapField.setAccessible(true);
-                commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
-
-                Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
-                knownCommandsField.setAccessible(true);
-                commands = (Map<String, Command>) knownCommandsField.get(commandMap);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+
+            Field commandMapField = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+            commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
+
+            Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            knownCommandsField.setAccessible(true);
+            commands = (Map<String, Command>) knownCommandsField.get(commandMap);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        if (pluginManager != null) {
-            pluginManager.disablePlugin(plugin);
-        }
+        pluginManager.disablePlugin(plugin);
 
         if (plugins != null)
             plugins.remove(plugin);
