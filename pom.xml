@@ -5,7 +5,8 @@
 
     <groupId>nl.parrotlync</groupId>
     <artifactId>ParrotPluginManager</artifactId>
-    <version>1.1${revision}</version>
+    <version>1.2${revision}</version>
+    <description>Plugin manager for auto-updating plugins made by ParrotLync</description>
 
     <properties>
         <revision>-SNAPSHOT</revision>
@@ -22,6 +23,12 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
     <distributionManagement>
