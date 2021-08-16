@@ -48,15 +48,15 @@
 
     <distributionManagement>
         <repository>
-            <id>nexus-releases</id>
-            <url>https://nexus.ipictserver.nl/repository/maven-releases/</url>
+            <id>nexus-discov</id>
+            <url>https://nexus.discov.network/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
 
     <repositories>
         <repository>
-            <id>nexus-releases</id>
-            <url>https://nexus.ipictserver.nl/repository/maven-group/</url>
+            <id>nexus-discov</id>
+            <url>https://nexus.discov.network/repository/maven-group/</url>
         </repository>
     </repositories>
 
