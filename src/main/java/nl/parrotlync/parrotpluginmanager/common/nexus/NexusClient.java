@@ -50,7 +50,7 @@ public class NexusClient {
 
     private static String getDownloadUrl(String artifact, String auth, Logger logger) {
         try {
-            URL url = new URL("https://nexus.ipictserver.nl/service/rest/v1/search/assets?sort=version&repository=maven-releases&group=nl.parrotlync&name=" + artifact);
+            URL url = new URL("https://nexus.discov.network/service/rest/v1/search/assets?sort=version&repository=maven-releases&group=nl.parrotlync&name=" + artifact);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
             connection.setRequestMethod("GET");
